@@ -1,0 +1,1133 @@
+\documentclass[11pt,letterpaper,oneside,openany]{book}
+% Compile with pdfLaTeX (twice), or latexmk -pdf main.tex.
+% All diagrams are drawn in LaTeX; no external files are required.
+\newif\ifshowappendices
+\showappendicesfalse % Change to \showappendicestrue for the source catalogue and editorial notes.
+\newif\ifshowsolutions
+\showsolutionsfalse % Change to \showsolutionstrue for the supplied solutions.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage[margin=1in,headheight=14pt]{geometry}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{booktabs,longtable,array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,trees}
+\usepackage{needspace}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[hidelinks,bookmarksnumbered=true]{hyperref}
+\hypersetup{pdftitle={Problems in Symbolic Logic},pdfauthor={TA recitation archive},pdfsubject={A problem bank for Haim Gaifman's A Course in Symbolic Logic}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt plus 1pt}
+\setlength{\emergencystretch}{2em}
+\setlist[enumerate,1]{label=(\alph*),ref=\alph*,leftmargin=2em,itemsep=3pt,topsep=5pt}
+\setlist[enumerate,2]{label=(\roman*),leftmargin=2em,itemsep=2pt,topsep=3pt}
+\setlist[itemize]{leftmargin=1.5em,itemsep=2pt,topsep=4pt}
+\setlist[description]{font=\normalfont\itshape,leftmargin=1.5em,itemsep=3pt}
+\allowdisplaybreaks[1]
+\titleformat{\chapter}[display]{\normalfont\huge\bfseries\raggedright\hyphenpenalty=10000}{\large\normalfont\scshape\chaptername\ \thechapter}{9pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{8pt}{22pt}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.7em}{}
+\titlespacing*{\section}{0pt}{18pt plus 3pt}{7pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\thepage}\renewcommand{\headrulewidth}{0pt}}
+\newcounter{problem}[chapter]
+\renewcommand{\theproblem}{\arabic{problem}}
+\providecommand{\theHproblem}{}
+\renewcommand{\theHproblem}{\theHchapter.\arabic{problem}}
+\newcommand{\problemref}[2]{\hyperref[prob:#2]{Chapter~#1, Problem~\ref*{prob:#2}}}
+\newenvironment{problem}[2]{\par\addvspace{11pt}\Needspace{5\baselineskip}\refstepcounter{problem}\label{prob:#1}\noindent\textit{\theproblem.\ #2}\par\nobreak}{\par}
+\newcommand{\reading}[1]{{\small\itshape Gaifman: #1.\par}\smallskip}
+\newcommand{\editorial}[1]{{\small\textit{Editorial note.} #1\par}}
+\newcommand{\solutionheading}[3]{\par\addvspace{12pt}\Needspace{4\baselineskip}\textbf{\problemref{#1}{#2}. #3}\par\nobreak}
+\newcommand{\blank}{\underline{\hspace{1cm}}}
+\newcommand{\circlediagram}{%
+\begin{center}
+\begin{tikzpicture}[scale=0.72]
+\foreach \s/\n in {0/1,4/2,8/4}{
+\begin{scope}[shift={(\s,0)}]
+\draw[thin,gray] (0,0) circle[radius=1.45];
+\foreach \rotation in {0,90,180,270}{
+\begin{scope}[rotate=\rotation]
+\foreach \i in {1,...,\n}{
+\pgfmathsetmacro{\xa}{1.45*cos(90*(\i-1)/\n)}
+\pgfmathsetmacro{\ya}{1.45*sin(90*(\i-1)/\n)}
+\pgfmathsetmacro{\xb}{1.45*cos(90*\i/\n)}
+\pgfmathsetmacro{\yb}{1.45*sin(90*\i/\n)}
+\draw[thick] (\xa,\ya) -- (\xa,\yb) -- (\xb,\yb);
+}
+\end{scope}}
+\draw[<->] (-1.45,0)--(1.45,0) node[midway,above,fill=white,inner sep=1pt] {$d=1$};
+\node at (0,-2.1) {\small perimeter $4$};
+\end{scope}}
+\end{tikzpicture}
+\end{center}}
+\newcommand{\constructionexample}{%
+\begin{center}
+\begin{tikzpicture}[level distance=9mm,sibling distance=18mm,every node/.style={inner sep=2pt}]
+\node {$\land$} child {node {$\neg$} child {node {$p$}}} child {node {$q$}};
+\end{tikzpicture}
+\end{center}}
+\begin{document}
+\frontmatter
+\begin{titlepage}
+\vspace*{1.15in}
+{\Huge\bfseries Problems in\\[8pt] Symbolic Logic\par}
+\vspace{0.45in}
+{\Large A problem bank for Haim Gaifman's\\[5pt]\textit{A Course in Symbolic Logic}\par}
+\vfill
+{\large Collected from the TA recitation archive\par}
+\vspace{0.2in}
+{Jamie Beardmore, Milo Beckman, and Wei\par}
+\vspace{0.35in}
+{Organized by chapter and topic\par}
+{October 2026\par}
+\end{titlepage}
+\chapter*{Using this book}
+\addcontentsline{toc}{chapter}{Using this book}
+These TA recitation exercises are organized by the chapters and topics of Haim Gaifman's \textit{A Course in Symbolic Logic}, with references to the relevant sections. Use his top-down proof methods; assume nonempty domains and equality as identity unless otherwise stated. Assess implication claims as directed, and translate sentences regardless of their factual truth.
+
+\tableofcontents
+\mainmatter
+\chapter{Declarative Sentences}
+\Needspace{10\baselineskip}\section{Truth-values and bivalence}
+\reading{1.1}
+% Source: Wk2 Milo.tex | Problem 5
+\begin{problem}{milo-w2-5}{Unprovability and bivalence}
+A famous result, called G{\"o}del's first incompleteness theorem, states (roughly) that in any consistent, effectively axiomatized formal theory strong enough for arithmetic, there are arithmetical sentences that can neither be proved nor disproved within that theory. Does this cause problems for the principle of bivalence?
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Context, types, and tokens}
+\reading{1.1.1--1.1.2}
+% Source: Wk2 Jamie.tex | Bivalence and its enemies, indexicals/demonstratives and homonyms
+\begin{problem}{jamie-2-bivalence-context}{Indexicals and homonyms}
+The following are purported counterexamples to bivalence. How might a proponent of bivalence reply? \begin{enumerate}
+\item Indexicals and demonstratives:
+\begin{quote}
+A: Come over here.\\
+B: I am over here.\\
+A: No you're not.\\
+B: Oh, you mean over \textit{there}!
+\end{quote}
+\item Homonyms:
+\begin{quote}
+I need to withdraw money tomorrow. To withdraw money, I need to go to a bank. Therefore, I need to go to a bank tomorrow.
+\end{quote}
+\end{enumerate}
+In the second example, make explicit any change in the sense of ``bank'' on which the alleged problem depends.
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Vagueness, non-denoting terms, and truth-value gaps}
+\reading{1.1.3--1.1.4}
+% Source: Wk2 Jamie.tex | Bivalence and its enemies, vagueness; Wk2 Jamie.tex | Bivalence and its enemies, category errors; Wk2 Jamie.tex | Bivalence and its enemies, non-denoting terms
+\begin{problem}{jamie-2-bivalence-vagueness}{Challenges to bivalence}
+How might a proponent of bivalence respond to each of the following challenges?
+\begin{enumerate}
+\item When is a person tall? Compare a man with an NBA player, and distinguish vagueness from context sensitivity.
+\item Consider the category-error example ``The empty set is lonely.''
+\item Consider ``The present prime minister of France (on September 8) is kind,'' assuming that the definite description has no referent. Discuss the role of context in assessing the example.
+\end{enumerate}
+\end{problem}
+
+\chapter{Sentential Logic}
+\Needspace{10\baselineskip}\section{Syntactic structure and construction trees}
+\reading{2.3}
+% Source: Wk2' Jamie.tex | Language, incomplete clauses; Wk2' Jamie.tex | Construction Trees, parenthetical why-question
+\begin{problem}{jamie-2prime-formation-clauses}{Formation rules and decidability}
+\begin{enumerate}
+\item Complete the formation clauses for a language with atomic sentences $p_1,p_2,p_3,\ldots$ and connectives $\wedge$ and $\neg$: when are $(A\wedge B)$ and $(\neg A)$ sentences?
+\item Explain how construction trees give a terminating procedure for deciding whether an arbitrary string is a sentence of this language. (This property is called \textit{decidability}.)
+\end{enumerate}
+\end{problem}
+
+% Source: Wk2' Jamie.tex | Construction Trees, three strings; Wk3 Milo.tex | Problem 2; Wk3 Wei.tex | Problem 2
+\begin{problem}{jamie-2prime-construction-trees}{Construction trees}
+Draw construction trees for the following expressions. Outermost parentheses and parentheses around negations may be omitted. In (d), treat $\Box$ and $\Diamond$ as additional unary connectives. In (e)--(f), assume no convention for precedence or associativity: give every possible grouping, and explain why the ungrouped strings are not sentences of the fully parenthesized language.
+\begin{enumerate}
+\item $\neg\neg(p\land q)$
+\item $(\neg(p\wedge((\neg q)\wedge r)))$
+\item $(p\to q)\vee(q\to p)$
+\item $\Box(p\to\Diamond q)$
+\item $p\land q\land r$
+\item $p\vee q\land r$
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Truth-functions and truth-tables}
+\reading{2.1--2.2}
+% Source: Wk3 Jamie.tex | Truth-Functionality, three questions; Wk4 Milo.tex | Problem 1; Wk7 Milo.tex | To study: truth-functional; Wk3 Wei.tex | Problem 3
+\begin{problem}{jamie-3-truth-functionality}{Testing truth functionality}
+Explain what it means for a connective to be truth-functional and how to test whether it is. For each expression below, give its truth function if it has one; otherwise give two cases in which the constituent sentences have the same truth values but the whole expression does not.
+\begin{enumerate}
+\item ``The New York Times has reported that \ldots''
+\item ``\ldots\ because \ldots''
+\item ``It's not the case that \ldots\ isn't true''
+\item ``\ldots, but \ldots''
+\item ``\ldots; therefore, \ldots''
+\item ``\ldots\ unless \ldots''
+\end{enumerate}
+\end{problem}
+
+% Source: Wk3 Jamie.tex | Truth Tables, definition blanks; Wk3 Jamie.tex | Truth Tables, three formulas; Wk3 Milo.tex | Problem 3; Wk3 Wei.tex | Problem 5
+\begin{problem}{jamie-3-truth-tables}{Truth tables, tautologies, and contradictions}
+Define tautology and contradiction. Construct a truth table for each formula and determine whether it is a tautology, a contradiction, or neither.
+\begin{enumerate}
+\item $p\wedge\neg q$
+\item $\neg(A\land B)\land C$
+\item $\neg(p\wedge q)\wedge(\neg p\wedge\neg q)$
+\item $\neg(A\land\neg B)\land\neg A$
+\item $\neg(A\land\neg A)$
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Conditionals and biconditionals}
+\reading{2.6}
+% Source: Wk2 Jamie.tex | Practice problems, four cards
+\begin{problem}{jamie-2-four-cards}{Checking a conditional with four cards}
+You are presented with four cards, each of which has a number on one side and a picture on the other. You need to make sure that the following conditional is true of every card:
+\begin{quote}
+If the card has ``1'' on one side, it has a picture of \textit{one} person on the other side.
+\end{quote}
+The cards are laid out on the table. You see:
+\begin{enumerate}
+\item Card 1: ``1''.
+\item Card 2: ``2''.
+\item Card 3: picture of one person.
+\item Card 4: picture of two persons.
+\end{enumerate} Which cards do you \textit{have to} turn over to check the conditional for every card?
+\end{problem}
+
+% Source: Wk4' Jamie.tex | Material Conditional, associativity question; Wk5 Jamie.tex | Biconditional, how-do-we-test prompt
+\begin{problem}{jamie-4prime-conditional-associativity}{Associativity and commutativity}
+Use joint truth tables to determine which of the following equivalences hold.
+\begin{enumerate}
+\item $(A\to B)\to C\equiv A\to(B\to C)$
+\item $(A\leftrightarrow B)\leftrightarrow C\equiv A\leftrightarrow(B\leftrightarrow C)$
+\item $A\leftrightarrow B\equiv B\leftrightarrow A$
+\end{enumerate}
+\end{problem}
+
+% Source: Wk5 Jamie.tex | Biconditional, triangle exercise (a–f); Wk5 Wei.tex | Problem 4
+\begin{problem}{jamie-5-triangle}{Necessary and sufficient conditions}
+For a triangle with side lengths $a,b,c$, determine whether each condition is necessary, sufficient, neither, or both for the triangle to be equilateral.
+\begin{enumerate}
+\item $a=b$.
+\item One angle is $90^\circ$.
+\item $a=b=c=1$.
+\item No angle is larger than any other.
+\end{enumerate}
+You now roll a die a positive finite number of times and record the values. For each pair below, determine whether $A$ is necessary, sufficient, neither, or both for $B$.
+\begin{enumerate}[start=5]
+\item $A$: every recorded value is smaller than $k$. $B$: the minimum recorded value is smaller than $k$.
+\item $A$: every recorded value is larger than $k$. $B$: the minimum recorded value is larger than $k$.
+\end{enumerate}
+\end{problem}
+
+% Source: Wk5 Wei.tex | Problem 2; Wk6 Wei.tex | Problem 4
+\begin{problem}{wei-wk5-2}{Iterated conditionals and biconditionals}
+\begin{enumerate}
+\item Define $\sigma_k$ recursively as follows:
+\[ \sigma_1 := (P\to Q) \]
+\[ \sigma_k := (\sigma_{k-1} \to P)\quad (k\geq 2)  \]
+For what values of $k$ is $\sigma_k$ a tautology? \textit{Hint: Write out the first few $\sigma_k$.}
+\item For $n\geq2$, give a necessary and sufficient condition for the left-associated formula $A_1\leftrightarrow A_2\leftrightarrow\cdots\leftrightarrow A_n$ to be true, in terms of the number of false $A_i$'s. \textit{Hint: Think of $\leftrightarrow$ as multiplication, a true sentence as $1$, and a false sentence as $-1$.}
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Equivalence laws and simplification}
+\reading{2.2, 2.5--2.6}
+% Source: Wk5 Milo.tex | Problem 1; Wk7 Milo.tex | To study: equivalence; Wk5' Jamie.tex | Biconditional, incomplete iff statement
+\begin{problem}{milo-w5-1}{Equivalence and its laws}
+Explain what it means for two formulas to be tautologically equivalent. Complete the statement: $A\equiv B$ if and only if $A\leftrightarrow B$ is a \ldots. Then identify the equivalence law used in each step below.
+\begin{enumerate}
+\item $(P \land (Q \lor Q)) \equiv (P \land Q)$
+\item $\neg\neg(P \land Q) \equiv \neg(\neg P \lor \neg Q)$
+\item $P \land (Q \lor \neg Q) \equiv (P \land Q) \lor (P \land \neg Q)$
+\item $(P \land Q) \land (R \land Q) \equiv P \land (Q \land (R \land Q))$
+\end{enumerate}
+\end{problem}
+
+% Source: Wk3' Jamie.tex | Joint Truth Tables, all three pairs; Wk4 Milo.tex | Problem 2; Wk4 Wei.tex | Problem 1
+\begin{problem}{jamie-3prime-joint-tables}{Testing equivalence}
+Are the formulas in each pair tautologically equivalent? Make a prediction, then check it with a joint truth table.
+\begin{enumerate}
+\item $\neg(A\vee B)$ and $\neg A\vee\neg B$
+\item $A\land B$ and $A\land(A\lor B)$.
+\item $\neg A\land\neg B$ and $\neg(A\lor B)$.
+\item $A\wedge\neg(A\vee\neg B)$ and $B\vee\neg(B\wedge\neg A)$
+\item $A\land(B\vee C)$ and $(A\land B)\vee C$.
+\item $A\land(A\lor B)$ and $A$.
+\end{enumerate}
+\end{problem}
+
+% Source: Wk4 Jamie.tex | Equivalence Shortcuts, three practice problems; Wk5 Milo.tex | Problem 2
+\begin{problem}{jamie-4-equivalence-laws}{Deriving equivalences}
+Prove each equivalence by a sequence of equivalence laws, justifying each step.
+\begin{enumerate}
+\item $\neg(A\vee\neg(B\vee\neg B))$ and $\neg A$. \emph{Hint:} What do you notice about the second disjunct? Use De Morgan first.
+\item $\neg A\vee(B\wedge\neg C)$ and $(B\vee\neg A)\wedge\neg(A\wedge C)$. \emph{Hint:} Use distributivity first\ldots\ maybe\ldots
+\item $\neg\neg(A \land (B \lor C)) \equiv (A \land B) \lor (A \land C)$
+\item $(A \land B) \lor \neg (A \lor \neg B) \equiv B$
+\end{enumerate}
+\end{problem}
+
+% Source: Wk6 Jamie.tex | Distributive Laws, two unfinished equivalences; Wk6 Milo - Solutions.tex | Inactive fragment (not typeset), items 2(a–c)
+\begin{problem}{jamie-6-conditional-distributivity}{Equivalences for the conditional}
+Complete and prove the equivalences in (a)--(b), then prove those in (c)--(d).
+\begin{enumerate}
+\item $A\to(B\wedge C)\equiv{}\ldots$
+\item $(A\vee B)\to C\equiv{}\ldots$
+\item $A\to(B\to C)\equiv(A\land B)\to C$.
+\item $A\to(B\to A)\equiv A\lor\neg A$.
+\end{enumerate}
+\end{problem}
+
+% Source: Wk6 Milo - Solutions.tex | Solution 3a (reconstructed prompt); Wk6 Milo - Solutions.tex | Solution 3b (reconstructed prompt); Wk6 Milo - Solutions.tex | Solution 3c (reconstructed prompt); Wk6 Milo - Solutions.tex | Solution 3d (reconstructed prompt)
+\begin{problem}{milo-w6-sol-3a}{Simplifying conditionals and biconditionals}
+Find a simpler equivalent formula in each case and justify the equivalence.
+\begin{enumerate}
+\item $(A\to B)\to A$
+\item $(A\lor B)\leftrightarrow(A\land B)$
+\item $(A\land B)\to(A\land C)$
+\item $(A\to B)\leftrightarrow(A\leftrightarrow B)$
+\end{enumerate}
+\end{problem}
+
+% Source: Wk6 Wei.tex | Problem 2
+\begin{problem}{wei-wk6-2}{Equivalence or counterexample}
+Either prove the equivalence using equivalence laws or refute it by a counterexample.
+\begin{enumerate}
+\item $A\to B \equiv B\vee \neg( A \vee  B)$
+\item $\neg(A\to B)\equiv A\to \neg B$
+\item $\neg(A\leftrightarrow B)\equiv (A\leftrightarrow\neg B)$
+\end{enumerate}
+\end{problem}
+
+\chapter{Sentential Logic in Natural Language}
+\Needspace{10\baselineskip}\section{Conjunction, disjunction, and negation}
+\reading{3.1.1--3.1.3}
+% Source: Wk2' Jamie.tex | Natural Language Formalisations, second item; Wk3' Jamie.tex | Disjunction, Natural language formalisation exercises; Wk3 Milo.tex | Problem 1; Wk4 Milo.tex | Problem 3; Wk3 Wei.tex | Problem 4
+\begin{problem}{jamie-2prime-jazz-style}{Conjunction, disjunction, and negation in English}
+Define suitable sentence letters and formalize the following in sentential logic.
+\begin{enumerate}
+\item Both Miles and Chet played nice, but one got his style from the other.
+\item Neither Jamie nor Ry want the builders to stay any longer than they need to.
+\item Amy, Bea, and Cat are all musicians, but they're not all drummers.
+\item Amy, Bea, and Cat are all musicians, but they're all not drummers.
+\item Either Amy and Bea both live in Brooklyn, or both Bea and Cat don't.
+\item Linda and Jane are compatible, though both are competitive. Use only $\land$ and $\neg$.
+\end{enumerate}
+\end{problem}
+
+% Source: Wk4 Wei.tex | Problem 2; Wk2' Jamie.tex | Natural Language Formalisations, third item
+\begin{problem}{wei-wk4-2}{Counting with sentence letters}
+Use sentence letters for Peter, Paul, and Mary being good musicians. Formalize the following in sentential logic.
+\begin{enumerate}
+\item At least one of Peter, Paul, and Mary is a good musician, but not all of them.
+\item At most two of Peter, Paul, and Mary are good musicians.
+\item Exactly one of Peter, Paul, and Mary is a good musician.
+\item Exactly two of Peter, Paul, and Mary are good musicians.
+\item For $n$ people, how many disjuncts are needed in a disjunctive normal form that lists each possible choice of exactly $m$ good musicians, where $0\leq m\leq n$?
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Conditionals, biconditionals, and unless}
+\reading{3.1.4}
+% Source: Wk4' Jamie.tex | Material Conditional, Natural language formalisations; Wk5 Milo.tex | Problem 3; Wk6 Milo.tex | Problem 1(e); Wk5 Wei.tex | Problem 5
+\begin{problem}{jamie-4prime-conditional-translation}{Conditionals, necessary conditions, and unless}
+Define suitable sentence letters and formalize the following.
+\begin{enumerate}
+\item I'll come to the party, assuming I'm invited.
+\item You can ride the bus unless you don't have 2.90.
+\item You're not going to have a good time in the case that you don't sleep or don't eat enough.
+\item Completing your homework is a necessary condition for passing the class.
+\item Today is a weekday if it is a Monday.
+\item Today is a Monday only if it is a weekday.
+\item A function is convex if and only if it has a negative second derivative.
+\end{enumerate}
+\end{problem}
+
+\chapter{Logical Implications and Proofs}
+\Needspace{10\baselineskip}\section{Validity, soundness, and counterexamples}
+\reading{4.1--4.2; Introduction}
+% Source: Wk2 Jamie.tex | Key Concepts (informal), nested question; Wk2 Jamie.tex | Validity and Justification, all three questions; Wk2 Milo.tex | Problem 3; Wk7 Milo.tex | To study: implication; Wk7 Milo.tex | To study: validity
+\begin{problem}{jamie-2-follows-from}{Validity, truth, and justification}
+\begin{enumerate}
+\item Make precise what it means for a conclusion to follow logically from its premises, and for an argument to be valid.
+\item Give an example of a valid argument with a false conclusion.
+\item Give an example of an invalid argument with a true conclusion.
+\item Does being justified in believing each of the premises and the conclusion entail that the argument is valid?
+\item Does an argument's being valid give us justification for believing each of the premises and the conclusion? How about justification for asserting them?
+\end{enumerate}
+\end{problem}
+
+% Source: Wk5' Jamie.tex | Implication, Exercises, three items; Wk6 Milo.tex | Problem 2
+\begin{problem}{jamie-5prime-implications}{Testing implication with truth tables}
+Use truth tables to determine whether each implication holds.
+\begin{enumerate}
+\item $A, A \to B \vDash B$
+\item $A \lor B, \neg A \vDash B$
+\item $A, \neg A \vDash B$
+\item $A\to(B\to C)\vDash(A\to B)\to C$.
+\end{enumerate}
+\end{problem}
+
+% Source: Wk2 Wei.tex | Problem 2
+\begin{problem}{wei-wk2-2}{Validity and soundness}
+For each of the following arguments, determine whether it is valid and whether it is sound:
+    \begin{itemize}
+        \item NASA lies to us about everything. Hence, the earth is flat.
+        \item We are developing powerful AI. Powerful AI has a low probability of causing severe harm. Hence, AI will not cause severe harm.
+        \item Iran is developing nuclear weapons. Whoever develops nuclear weapons needs to be stopped. Hence, Iran needs to be stopped.
+    \end{itemize}
+Where the truth of a premise is uncertain, state what would have to be established to assess soundness.
+\end{problem}
+
+% Source: Wk6 Wei.tex | Problem 3
+\begin{problem}{wei-wk6-3}{Biconditionals and agreement in truth value}
+Does either formula below imply the other?
+\[ (A \leftrightarrow B) \leftrightarrow C \]
+\[ (A\land B \land C) \vee (\neg A \land \neg B \land \neg C) \]
+\end{problem}
+
+% Source: Wk7 Wei.tex | Problem 4
+\begin{problem}{wei-wk7-4}{Proposed rules of implication}
+Are the following proposed rules correct? Give a reason or a counterexample.
+\begin{itemize}
+    \item $C \vDash A\vee B$ iff $C \vDash A$ \textbf{or} $C \vDash B$.
+    \item $\Gamma, A\land B\vDash C$ iff $\Gamma,A\vDash B$ \textbf{and} $\Gamma,B\vDash C$
+\end{itemize}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Informal arguments and fallacies}
+\reading{Introduction; 4.5}
+% Source: Wk2 Jamie.tex | Practice problems, first problem; Wk2 Milo.tex | Bonus riddle
+\begin{problem}{jamie-2-three-logicians}{What the other logicians know}
+\begin{enumerate}
+\item Explain this joke. Three logicians walk into a bar. The bartender asks them, ``Do you all want a drink?'' The first logician says, ``I don't know.'' The second logician says, ``I don't know.'' The third says, ``Yes.'' The bartender serves them each a drink. How many drinks should the bartender serve?
+\item Three logicians are standing in a straight line. The one in the back can see the two in front, the one in the middle can see the one in front, and the one in front can't see anything.
+
+A hat seller comes up and shows them all three white hats and two black hats. She puts one hat on each person's head, and hides the remaining two hats.
+
+She says, ``Does anyone know what color hat is on their own head?'' No one answers.
+
+She asks again, ``\textit{Now} does anyone know what color hat is on their own head?'' Still no answer.
+
+She asks a third time, ``\textit{Now} does anyone know what color hat is on their own head?'' One person answers. Who is it, and what color is their hat?
+\end{enumerate}
+\end{problem}
+
+% Source: Wk2 Jamie.tex | Some Arguments, dialogue headed To discuss
+\begin{problem}{jamie-2-vaccines}{Assessing a statistical argument}
+Discuss the reasoning in the following dialogue.
+\begin{quote}
+A: Doesn't a vaccine save lives?\\
+B: Correct, it lowers the death rate; it doesn't prevent it a hundred percent.\\
+A: Okay, so why are people dying?\\
+B: Because it's not a hundred percent.\\
+A: But reality is the majority of the people who are dying were vaccinated.\\
+B: Correct, because most people were vaccinated.
+\end{quote}
+\end{problem}
+
+% Source: Wk2 Wei.tex | Problem 1; Wk2 Milo.tex | Problem 4
+\begin{problem}{wei-wk2-1}{Diagnosing fallacious arguments}
+Identify the error in each argument.
+\begin{enumerate}
+\item We begin by showing that $\pi=4$. 
+            \circlediagram
+        
+        As we repeat this process, it is clear that the staircase-shaped curve around the circle gets infinitely close to the circle. Hence at the end of the day, the staircase-shaped curve and the circle must have the same perimeter. Since the staircase-shaped curve always has perimeter $4$, so must the circle. Now, we know that the perimeter of a circle is $2\pi r$. Solving for $\pi$ then gives $\pi=4$.
+\item We now show that $1=-1$. Recall that by definition, $i^2=-1$.
+        \begin{align*}
+            1 &= \sqrt{1}\\
+            &=\sqrt{(-1)(-1)}\\
+            &=\sqrt{-1}\sqrt{-1}\\
+            &=i\cdot i\\
+            &=-1
+        \end{align*}
+\item \textbf{Smallest positive number.} For every positive number, no matter how small, there always exists a smaller number. For example, $0.01$ is a small number, but $0.001$ is even smaller. So a smaller positive number always exists. So there must be a positive number which is smaller than every other positive number.
+\item \textbf{Santa Claus exists.} Let $P$ be the sentence, ``If $P$ is true, then Santa Claus exists.'' Assume that $P$ is true. Then, together with what $P$ claims, i.e. ``If $P$ is true, then Santa Claus exists'', we can conclude that Santa Claus exists. So by assuming that $P$ is true, we get that Santa Claus exists. This means, if $P$ is true, then Santa Claus exists. This is exactly what $P$ says, so $P$ is true. It follows that Santa Claus exists.
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Top-down derivations and the fool-proof method}
+\reading{4.2--4.3}
+% Source: Wk6 Jamie.tex | Proof System, Practice, two problems; Wk7 Milo.tex | Problem 2; Wk8 Milo.tex | Problem 1(a–d,f–g)
+\begin{problem}{jamie-6-proof-practice}{Derivation or counterexample}
+For each claim, either give a top-down derivation using the implication laws or find a counterexample.
+\begin{enumerate}
+\item $A\vDash B\to(A\wedge B)$.
+\item $P\to (Q\vee R), Q\to S \vDash P\to (S\vee R)$
+\item $\vDash ((A\to B)\to C)\to (B\to C)$
+\item $\vDash (A\to (B\to C))\to (B\to C)$
+\item $A\leftrightarrow B, B\vee C, A\to\neg C \vDash A \vee (C\land \neg B)$
+\item $\vDash [A \to (B \to C)] \to [(A \to B) \to (A \to C)]$
+\item $A \lor (B \land C), B \lor (A \land C) \vDash (A \lor B) \land C$
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Proofs by contradiction}
+\reading{4.4}
+% Source: Wk14 Wei.tex | Problem 3
+\begin{problem}{wei-wk14-3}{No largest integer}
+Prove by contradiction that there is no largest integer.
+\end{problem}
+
+\chapter{Mathematical Interlude}
+\Needspace{10\baselineskip}\section{Sets, membership, and set operations}
+\reading{5.1.1--5.1.3}
+% Source: Wk9 Jamie.tex | (Naive) Set-Theory, first two set-builder questions; Wk9 Milo.tex | Problem 1
+\begin{problem}{jamie-9-set-builders}{Reading set-builder notation}
+Describe or list the elements of each set. State your convention about whether $0\in\mathbb N$.
+\begin{enumerate}
+\item $\{x\in\mathbb N:x=2y+1\text{ for some }y\in\mathbb N\}$.
+\item $\{x : x \text{ is the first letter of a day of the week}\}$
+\item $\{x+1 : x \text{ is a positive factor of 6}\}$
+\end{enumerate}
+\end{problem}
+
+% Source: Wk8 Wei.tex | Problem 2; Wk9 Jamie.tex | (Naive) Set-Theory, empty-set question; Wk9 Jamie.tex | (Naive) Set-Theory, powerset question; Wk9 Milo.tex | Problem 2(a–c)
+\begin{problem}{wei-wk8-2}{Subsets and power sets}
+Treat $a,b,c,d$ as distinct objects that are not themselves sets.
+\begin{enumerate}
+\item Is the empty set a subset of every set? Explain.
+\item Let $X=\{a,b,c\}$ and $Y=\{a,d\}$. List $\mathcal P(X)$, $\mathcal P(Y)$, and $\mathcal P(X)\cap\mathcal P(Y)$.
+\item If $A$ has $n$ elements, how many elements does $\mathcal P(A)$ have? Explain.
+\item Let $A=\{a,b\}$. Which of the following are subsets of $A$, and which are subsets of $\mathcal P(A)$?\[\varnothing,\quad a,\quad\{a\},\quad\{a,b\},\quad\{\{a\}\},\quad\{\{a\},\{b\}\}.\]
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Ordered pairs, relations, and Cartesian products}
+\reading{5.1.3--5.1.4}
+% Source: Wk9 Milo.tex | Problem 2(d); Wk9 Milo.tex | Problem 3; Wk9 Wei.tex | Problem 1; Wk9 Jamie.tex | (Naive) Set-Theory, final item Functions?
+\begin{problem}{milo-w9-2d}{Cartesian products, relations, and functions}
+\begin{enumerate}
+\item Let $X=\{a,b,c\}$ and $Y=\{a,d\}$. List the elements of $X\times Y$.
+\item Let $A$ be the set representing the binary relation $x \le y$ over the integers, and let $B$ be the set representing the binary relation $x^2 = y$ over the integers. Is $A \subseteq B$, $B \subseteq A$, neither, or both? Explain.
+\item A binary relation on $S$ is a subset of $S\times S$. If $S$ has $n$ elements, how many binary relations on $S$ are there? Explain.
+\item How can functions be represented in set theory?
+\end{enumerate}
+\end{problem}
+
+\chapter{The Sentential Calculus}
+\Needspace{10\baselineskip}\section{Normal forms}
+\reading{6.1.3}
+% Source: Wk6 Wei.tex | Problem 5; Wk5' Jamie.tex | Truth-functional Completeness, algorithm question
+\begin{problem}{wei-wk6-5}{Constructing disjunctive normal forms}
+Find a sentence $\varphi$ that uses only $\neg, \vee, \land$ together with the sentence letters which has the following truth-table.
+\[
+\begin{array}{|c|c|c|c|}
+\hline
+P & Q & R & \varphi \\
+\hline
+T & T & T & T \\
+T & T & F & F \\
+T & F & T & F \\
+T & F & F & F \\
+F & T & T & F \\
+F & T & F & F \\
+F & F & T & F \\
+F & F & F & T \\
+\hline
+\end{array}
+\]
+Can you devise a general algorithm for constructing a sentence using only $\neg, \vee, \land$ to match a truth-table? What should the algorithm do if every row is $F$?
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Truth-functions and complete sets of connectives}
+\reading{6.1.3}
+% Source: Wk5' Jamie.tex | Truth-functional Completeness, final question; Wk5' Jamie.tex | Truth-functional Completeness, bonus question; Wk7 Milo.tex | To study: completeness; Wk7 Wei.tex | Problem 1
+\begin{problem}{jamie-5prime-nand-nor}{Complete and incomplete sets of connectives}
+Let $\uparrow$ be NAND and $\downarrow$ be NOR: their truth columns are $F,T,T,T$ and $F,F,F,T$, respectively, in row order $(T,T),(T,F),(F,T),(F,F)$.
+\begin{enumerate}
+\item What does it mean for a set of connectives to be truth-functionally complete?
+\item Show that $\{\land,\lor\}$ is not truth-functionally complete. What feature of formulas built from these connectives makes the proof work?
+\item Show that $\{\uparrow\}$ is truth-functionally complete. \textit{Hint: First express $\neg P$ using only $P$ and $\uparrow$, then express disjunction.}
+\item Show that $\{\downarrow\}$ is truth-functionally complete.
+\end{enumerate}
+\end{problem}
+
+% Source: Wk7 Milo.tex | Problem 1; Wk7 Wei.tex | Problem 2
+\begin{problem}{milo-w7-1}{An asymmetric connective}
+Let $A\mathbin{\smile}B$ be true exactly when $A$ is true and $B$ is false.
+\begin{enumerate}
+\item Is $\mathbin{\smile}$ commutative? Is it idempotent?
+\item Using only $\neg$ and $\mathbin{\smile}$, express $A\land B$. Verify your answer by a truth table.
+\item Is $\{\mathbin{\smile},\neg\}$ truth-functionally complete? Justify your answer.
+\end{enumerate}
+\end{problem}
+
+\chapter{Predicate Logic Without Quantifiers}
+\Needspace{10\baselineskip}\section{Quantifier-free syntax, semantics, and inference}
+\reading{7.1--7.2}
+% Source: Wk9 Jamie.tex | First-Order Logic minus the quantification, Syntax, inductive-definition prompt; Wk9 Jamie.tex | First-Order Logic minus the quantification, Syntax, explicit Exercise; Wk9 Wei.tex | Problem 2
+\begin{problem}{jamie-9-quantifier-free-formation}{Formation rules and well-formedness}
+Give the inductive clauses for building complex formulas in $\mathrm{PC}_0$ with equality using $\neg,\wedge,\vee,\to,\leftrightarrow$. Then determine which expressions below are well formed, explaining any failures. Let $a,b,c$ be constants, $F,P$ one-place predicates, $Q$ a two-place predicate, and $H$ a predicate of fixed arity. This language has no individual variables.
+\begin{enumerate}
+\item $Fa$
+\item $Fb\wedge\neg(a=)$
+\item $H(a)\to H(a,a)$
+\item $P(a\land b\land c)$
+\item $P(\{a,c\})$
+\item $Q(x,a)\to Q(x,b)$
+\end{enumerate}
+\end{problem}
+
+% Source: Wk9 Wei.tex | Problem 3
+\begin{problem}{wei-wk9-3}{Evaluating quantifier-free sentences}
+Consider the following sentences of $\mathrm{PC}_0$ with equality.
+\begin{enumerate}
+    \item $P(a)\land P(b)\land P(c)$
+    \item $P(a)\to Q(a,b)$
+    \item $Q(c,a)\to Q(c,b)$
+    \item $a=b \vee b=c\vee c=a$
+\end{enumerate}
+Determine which of these sentences are true in the following interpretation.
+\begin{itemize}
+    \item $D=\{1,2,3\}$
+    \item $\delta(a)=1,\quad \delta(b)=2, \quad \delta(c)=3$
+    \item $\pi(P)=\{2,3\}$
+    \item $\pi(Q)=\{ (1,2),(1,1), (3,3),(3,1),(2,2) \}$
+\end{itemize}
+\end{problem}
+
+% Source: Wk10 Milo.tex | Problem 1(a)
+\begin{problem}{milo-w10-1a}{A quantifier-free derivation}
+Prove the following implication.
+\[H(a), H(a) \to L(a,b) \vDash (L(a,b) \to H(b)) \to H(b)\]
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Equality and substitution of identicals}
+\reading{7.2}
+% Source: Wk10 Milo.tex | Problem 1(b–c); Wk15 Milo.tex | Problem 1(c); Wk15 Wei.tex | Problem 1, fifth implication
+\begin{problem}{milo-w10-1bc}{Derivations with equality}
+Prove the following implications using the equality laws. Use proof by contradiction in (a).
+\begin{enumerate}
+\item $a=b, P(a) \vDash P(b)$
+\item $P(a,b), a \approx b, P(b,b) \to (b \approx c) \vDash P(c,c)$
+\item $F(a), \neg(F(b) \land F(c)) \vDash (a\approx b) \to \neg(b \approx c)$
+\item $a_1=a_2,a_2=a_3,...,a_{n-1}=a_n\vDash a_1=a_n$
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Quantifier-free formalization}
+\reading{7.0, 7.3}
+% Source: Wk12 Milo.tex | Problem 1(c)
+\begin{problem}{milo-w12-1c}{At least two artists}
+Formalize the following sentence in predicate logic. Provide a key specifying what your predicates and constants stand for.
+At least two of Dan, Eve, and Mia are artists. Assume that Dan, Eve, and Mia are distinct people.
+\end{problem}
+
+\chapter{First-Order Logic}
+\Needspace{10\baselineskip}\section{Scope and variable binding}
+\reading{8.2--8.2.1}
+% Source: Wk11 Milo.tex | Problem 2; Wk10 Milo.tex | Problem 3; Wk11 Wei.tex | Problem 1
+\begin{problem}{milo-w11-2}{Scope, binding, and interpretation}
+Let the domain be people, let $L(x,y)$ mean that $x$ likes $y$ and $H(x)$ that $x$ is happy, and let $v$ be a constant naming Plato. Identify every free and bound occurrence of a variable in the following formulas. Give an English interpretation where possible, making any dependence on free variables explicit.
+\begin{enumerate}
+\item $x \approx y$
+\item $\exists x (\neg(x \approx y) \to L(x,y))$
+\item $\exists x \forall y (\neg(x \approx y) \to L(x,y))$
+\item $(\forall xL(x,y)) \to \exists z(H(z) \to \neg L(y,z))$
+\item $v=x$
+\item $\forall x\exists y(x=y)$
+\item $\exists y\forall x(y=x)$
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Terms and function symbols}
+\reading{8.2.4}
+% Source: Wk9 Wei.tex | Problem 4
+\begin{problem}{wei-wk9-4}{Arithmetic syntax and function symbols}
+\begin{enumerate}
+    \item Identify the syntactic role of each symbol in the following statements, distinguishing names, predicates, and function symbols. 
+    \begin{enumerate}
+        \item $2>1$
+        \item $(3+2)\times 4=20$
+        \item $e^3>3$
+        \item $1<2<3$
+    \end{enumerate}
+    \item Which of the following is a wff if the math symbols have their typical syntactic type and meaning? 
+    \begin{enumerate}
+        \item $P(2+2)$ where P is the predicate for ``...is less than 2''.
+        \item $P((2+4)>5)$
+        \item $Q((2^5 \times (7+7))$ where Q is the predicate ``...is closer to 0 than...''
+    \end{enumerate}
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Translating quantified sentences}
+\reading{8.3}
+% Source: Wk10 Milo.tex | Problem 2(a–c,e); Wk11 Jamie.tex | Formalisation Exercises, all six items; Wk11 Jamie.tex | Formalisation Exercises, closing schematic prompt
+\begin{problem}{milo-w10-2abce}{Quantifiers and negation in English}
+Formalize the following over a domain of people. For (a)--(d), use $H(x)$ for being happy, $L(x,y)$ for liking, and constants for Ann, Bea, and Cat. Choose suitable predicates for (e)--(g). Identify any equivalent translations, and discuss possible scope ambiguities.
+\begin{enumerate}
+\item Everyone likes Bea and Bea likes everyone.
+\item No one's happy.
+\item Ann doesn't like anyone, and Cat doesn't like everyone.
+\item Some happy person doesn't like everyone.
+\item Not everybody who says they listen to jazz listens to jazz.
+\item Some who say they listen to jazz don't listen to jazz.
+\item Everybody who says they listen to jazz does not listen to jazz.
+\end{enumerate}
+\end{problem}
+
+% Source: Wk11 Milo.tex | Problem 3
+\begin{problem}{milo-w11-3}{Family relations}
+Using $M(x)$ as ``$x$ is male'', $F(x)$ as ``$x$ is female'', and $C(x,y,z)$ as ``$x$ is a child of $y$ and $z$'', formalize the following sentences. For this exercise, take siblings to mean distinct people sharing both parents, and assume that $C(x,y,z)$ is symmetric in its parent arguments $y,z$:
+\begin{enumerate}[label=(\alph*)]
+    \item Ann has a father. 
+    \item $x$ is a sibling of Ann. \textit{(Hint: $x$ cannot be Ann!)}
+    \item $x$ is $y$'s maternal grandmother. 
+    \item $x$ has no brothers.
+\end{enumerate}
+\end{problem}
+
+% Source: Wk12 Milo.tex | Problem 1(a,b,d,e)
+\begin{problem}{milo-w12-1abde}{Friends and artists}
+Formalize the following sentences in predicate logic. Provide a key specifying what your predicates and constants stand for.
+\begin{enumerate}[label=(\alph*)]
+\item Dan and Eve have all the same friends.
+\item Dan is friends with all of Eve's friends, but Eve isn't friends with all of Dan's friends.
+\item Dan is friends with all of Eve's artist friends.
+\item All of Eve's friends are either artists or friends with Mia.
+\end{enumerate}
+\end{problem}
+
+% Source: Wk11 Wei.tex | Problem 2(a--d); Wk12 Wei.tex | Problem 1
+\begin{problem}{wei-wk11-2}{Translating mathematical claims}
+Translate the following into first-order logic, specifying your domain and symbols.
+\begin{enumerate}
+\item Every rational number bigger than $3$ is bigger than $1$ and $2$.
+\item No triangle is equilateral unless it is isosceles.
+\item Every integer which has an integer divisor is greater than that divisor.
+\item \textbf{(The interesting-number argument)} Any uninteresting number with the property that all smaller numbers are interesting is interesting.
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Quantifier scope in ordinary language}
+\reading{8.3.2, 8.3.5--8.3.6}
+% Source: Wk11 Jamie.tex | Terms, WFFs, Scope, three examples
+\begin{problem}{jamie-11-scope}{Scope in ordinary language}
+Consider the scope ambiguities in the following statements:\begin{enumerate}
+\item 10 percent of recorded violent crime in America was committed by a child.
+\item Everybody dislikes somebody.
+\item The present king of America is not bald.
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Identity, uniqueness, and counting}
+\reading{8.3.2, 8.3.6}
+% Source: Wk10 Milo.tex | Problem 2(d); Wk11 Wei.tex | Problem 2(e--f); repeated in Wk12 Wei.tex, Problem 1(b--c); Wk12 Wei.tex | Problem 1, least-number translation
+\begin{problem}{milo-w10-2d}{Identity, uniqueness, and counting}
+Translate the following into first-order logic with equality. For (a), take the domain to be people, use $H(x)$ for being happy, and use a constant for Ann. For the other parts, specify your domain and symbols.
+\begin{enumerate}
+\item Someone other than Ann is unhappy.
+\item Exactly one natural number is smaller than 1.
+\item Exactly two natural numbers are smaller than 2.
+\item Some natural number is smaller than every other natural number.
+\end{enumerate}
+\end{problem}
+
+\chapter{FOL: Models, Truth and Logical Implication}
+\Needspace{10\baselineskip}\section{Models, satisfaction, and truth}
+\reading{9.1}
+% Source: Wk12 Wei.tex | Problem 2
+\begin{problem}{wei-wk12-2}{Truth and variable assignments in a model}
+Let $\mathcal{M}$ be as follows:
+\begin{align*}
+    |\mathcal{M}| &= \{1,2,3,4\} \\
+    O^\mathcal{M} &= \{(1,2),(2,3),(3,4),(1,3),(1,4),(2,4)\}\\
+    N^\mathcal{M} &= \{(1,2),(2,1),(4,2),(2,4)\}\\
+    S^\mathcal{M} &= \{(1,1),(2,2),(3,3),(4,4)\}\\
+    R^\mathcal{M} &=  \{1,2,3\}
+\end{align*}
+Determine the truth value of each sentence and justify your answer.
+\begin{enumerate}
+\item $\forall x (R(x))$
+\item $\forall x\forall y (N(x,y)\leftrightarrow N(y,x))$
+\item $\forall x \forall y \forall z((O(x,y)\land O(y,z))\to O(x,z))$
+\item $\forall x \exists y(S(x,y))$
+\item $\exists x  \forall y(S(x,y))$
+\end{enumerate}
+For each open formula below, find a satisfying assignment or explain why none exists.
+\begin{enumerate}[start=6]
+\item $O(x,y)\land N(x,y)$
+\item $O(x,y)\land S(x,y)$
+\item $O(x,y)\land O(y,z)\land O(z,u) \land S(u,v)$
+\end{enumerate}
+\end{problem}
+
+% Source: Wk12 Milo.tex | Problem 3
+\begin{problem}{milo-w12-3}{Build true and false interpretations}
+For each sentence, construct one model where the sentence is true and one model where it's false.
+\begin{enumerate}[label=(\alph*)]
+    \item $\exists x [L(x,x) \land \neg H(x)]$ 
+    \item $\forall x \exists y [H(x) \leftrightarrow L(x,y)]$
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Logical implication and countermodels}
+\reading{9.2.1--9.2.2}
+% Source: PSet 11 Rewrite - Milo.tex | Problem 7; PSet 11 Rewrite - Milo.tex | Problem 8; Wk15 Milo.tex | Problem 2; Wk14 Wei.tex | Problem 1
+\begin{problem}{pset11-7}{Constructing countermodels}
+Construct a countermodel to each claim. For (a)--(c), show that the premises are true and the conclusion false. For (d), show that the two sides differ in truth value.
+\begin{enumerate}
+\item $\forall x (Px \to Rx), \neg Pc \models \exists x \neg Rx$
+\item $\exists x (Rx \leftrightarrow Sx), \exists x(Sx \leftrightarrow Tx) \models \exists x (Rx \leftrightarrow Tx)$
+\item $\exists x(Px \land Qx), Pc \vDash Qc$
+\item $\forall x (Px\vee Qx)\equiv \forall x Px\vee \forall x Qx$
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Equivalence laws for quantifiers}
+\reading{9.2.3}
+% Source: Wk14 Jamie.tex | Equivalence Practice, item 1; PSet 10 Rewrite.tex | Problem 2; PSet 10 Rewrite.tex | Problem 3; PSet 10 Rewrite.tex | Problem 4; PSet 10 Rewrite.tex | Problem 5; Wk14 Milo.tex | Problem 1; Wk14 Wei.tex | Problem 2
+\begin{problem}{jamie-14-equivalence-1}{Quantifier equivalences}
+Prove each equivalence by a chain of equivalences, justifying every step. Use commutativity of quantifiers of the same type, distribution of $\forall$ over $\land$ and of $\exists$ over $\lor$, De Morgan laws for quantifiers, null quantification, change of bound variables, and sentential equivalences. Derive any additional quantifier-shifting law you use from these laws.
+\begin{enumerate}
+\item $\forall x\,\neg(Fx\wedge Gy)\equiv(\exists x\,Fx)\to\neg Gy$
+\item $\exists x \forall y \neg R(x,y) \equiv \neg \forall z \exists y R(z,y)$
+\item $\forall x (\exists y \neg R(x,y) \to F(a)) \equiv \forall x \forall y R(x,y) \vee F(a)$
+\item $\neg \exists x \forall y (R(x,y) \vee R(y,x)) \equiv \forall z \forall x \exists y (\neg R(x,y) \wedge \neg R(y,x))$
+\item $\neg ( \forall x F(x) \vee \forall y R(y,y)) \equiv \exists x(\neg F(x) \wedge \exists y \neg R(y,y))$
+\item $[\exists x\,U(x)]\to[\forall y\,W(y)] \equiv \forall x\forall y\,[U(x)\to W(y)]$
+\item $\forall z (\forall x (Px \land \exists y (Lxy))\land Qz)\equiv \forall y \exists z (Py\land Lyz)\land \forall w Q w$
+\end{enumerate}
+\end{problem}
+
+\Needspace{10\baselineskip}\section{Top-down first-order proofs}
+\reading{9.3.1--9.3.2}
+% Source: PSet 11 Rewrite - Milo.tex | Problem 1; PSet 11 Rewrite - Milo.tex | Problem 2; PSet 11 Rewrite - Milo.tex | Problem 3; PSet 11 Rewrite - Milo.tex | Problem 4; PSet 11 Rewrite - Milo.tex | Problem 5; PSet 11 Rewrite - Milo.tex | Problem 6; Wk15 Milo.tex | Problem 3
+\begin{problem}{pset11-1}{First-order proofs by contradiction}
+Prove each implication by contradiction using the first-order proof rules.
+\begin{enumerate}
+\item $\forall x [P(x,y) \lor P(y,x)] \vDash P(y,y)$
+\item $\neg \exists x P(x,x) \vDash \exists x \neg P(x,y)$
+\item $\forall v [S(v) \to R(v,x)] \land \neg \exists wR(w,w) \vDash \neg S(x)$
+\item $\vDash \forall x [\neg(Sx \lor Rx) \to \exists y (Sy \to Ry)]$
+\item $\vDash \forall x \exists y P(x,y) \lor \exists x \forall y \neg P(x,y)$
+\item $\forall y [R(x) \leftrightarrow P(x,y)] \vDash \forall yP(x,y) \lor \forall y \neg P(x,y)$
+\end{enumerate}
+\end{problem}
+
+% Source: Wk15 Wei.tex | Problem 1
+\begin{problem}{wei-wk15-1}{First-order proof or counterexample}
+Either prove each claim using the first-order derivation and equality laws or provide a countermodel.
+\begin{enumerate}
+\item $\forall x (Px\to Qx)\vDash \exists x Px \vee \exists x Qx$
+\item $\neg\exists x  Px\vDash  \forall x( Px\to Qx) \land\forall x(Px\to\neg Qx)$
+\item $\vDash\exists x(Px\to\forall xPx)$
+\item $\forall x \exists y x=y\vDash \exists y \forall x x=y$
+\end{enumerate}
+\end{problem}
+
+\renewcommand{\chaptername}{Appendix}\appendix
+\ifshowappendices
+\chapter{Source catalogue}
+The archive contains 43 LaTeX files. The table below lists the original source files and the retained exercises to which each file contributes. Solution files are listed separately, including cases where a prompt was recovered from a supplied solution.
+
+\small\begin{longtable}{@{}p{0.50\textwidth}p{0.45\textwidth}@{}}
+\toprule Original file & Problems (by chapter) \\ \midrule\endhead
+Wk2 Jamie.tex & Ch.~1: \ref{prob:jamie-2-bivalence-context}, \ref{prob:jamie-2-bivalence-vagueness}; Ch.~2: \ref{prob:jamie-2-four-cards}; Ch.~4: \ref{prob:jamie-2-follows-from}, \ref{prob:jamie-2-three-logicians}, \ref{prob:jamie-2-vaccines} \\
+Wk2' Jamie.tex & Ch.~1: \ref{prob:jamie-2-bivalence-context}, \ref{prob:jamie-2-bivalence-vagueness}; Ch.~2: \ref{prob:jamie-2prime-formation-clauses}, \ref{prob:jamie-2prime-construction-trees}; Ch.~3: \ref{prob:jamie-2prime-jazz-style}, \ref{prob:wei-wk4-2}; Ch.~4: \ref{prob:jamie-2-follows-from} \\
+Wk3 Jamie.tex & Ch.~2: \ref{prob:jamie-2prime-formation-clauses}, \ref{prob:jamie-2prime-construction-trees}, \ref{prob:jamie-3-truth-functionality}, \ref{prob:jamie-3-truth-tables}; Ch.~3: \ref{prob:jamie-2prime-jazz-style}, \ref{prob:wei-wk4-2} \\
+Wk3' Jamie.tex & Ch.~2: \ref{prob:jamie-3-truth-functionality}, \ref{prob:jamie-3-truth-tables}, \ref{prob:jamie-3prime-joint-tables}; Ch.~3: \ref{prob:jamie-2prime-jazz-style} \\
+Wk4 Jamie.tex & Ch.~2: \ref{prob:jamie-3-truth-tables}, \ref{prob:jamie-3prime-joint-tables}, \ref{prob:jamie-4-equivalence-laws}; Ch.~3: \ref{prob:jamie-2prime-jazz-style} \\
+Wk4' Jamie.tex & Ch.~2: \ref{prob:jamie-2-four-cards}, \ref{prob:jamie-4prime-conditional-associativity}, \ref{prob:jamie-4-equivalence-laws}; Ch.~3: \ref{prob:jamie-4prime-conditional-translation} \\
+Wk5 Jamie.tex & Ch.~2: \ref{prob:jamie-2-four-cards}, \ref{prob:jamie-4prime-conditional-associativity}, \ref{prob:jamie-5-triangle}; Ch.~3: \ref{prob:jamie-4prime-conditional-translation} \\
+Wk5' Jamie.tex & Ch.~2: \ref{prob:jamie-4prime-conditional-associativity}, \ref{prob:jamie-5-triangle}, \ref{prob:milo-w5-1}; Ch.~3: \ref{prob:jamie-4prime-conditional-translation}; Ch.~4: \ref{prob:jamie-5prime-implications}; Ch.~6: \ref{prob:wei-wk6-5}, \ref{prob:jamie-5prime-nand-nor} \\
+Wk6 Jamie.tex & Ch.~2: \ref{prob:jamie-6-conditional-distributivity}; Ch.~4: \ref{prob:jamie-5prime-implications}, \ref{prob:jamie-6-proof-practice}; Ch.~6: \ref{prob:wei-wk6-5}, \ref{prob:jamie-5prime-nand-nor} \\
+Wk9 Jamie.tex & Ch.~5: \ref{prob:jamie-9-set-builders}, \ref{prob:wei-wk8-2}, \ref{prob:milo-w9-2d}; Ch.~7: \ref{prob:jamie-9-quantifier-free-formation} \\
+Wk11 Jamie.tex & Ch.~8: \ref{prob:milo-w10-2abce}, \ref{prob:jamie-11-scope} \\
+Wk14 Jamie.tex & Ch.~9: \ref{prob:jamie-14-equivalence-1} \\
+Wk2 Milo.tex & Ch.~1: \ref{prob:milo-w2-5}; Ch.~2: \ref{prob:jamie-2-four-cards}; Ch.~4: \ref{prob:jamie-2-follows-from}, \ref{prob:jamie-2-three-logicians}, \ref{prob:wei-wk2-1} \\
+Wk3 Milo.tex & Ch.~2: \ref{prob:jamie-2prime-construction-trees}, \ref{prob:jamie-3-truth-tables}; Ch.~3: \ref{prob:jamie-2prime-jazz-style} \\
+Wk4 Milo.tex & Ch.~2: \ref{prob:jamie-3-truth-functionality}, \ref{prob:jamie-3prime-joint-tables}; Ch.~3: \ref{prob:jamie-2prime-jazz-style} \\
+Wk5 Milo.tex & Ch.~2: \ref{prob:milo-w5-1}, \ref{prob:jamie-4-equivalence-laws}; Ch.~3: \ref{prob:jamie-4prime-conditional-translation} \\
+Wk6 Milo.tex & Ch.~3: \ref{prob:jamie-4prime-conditional-translation}; Ch.~4: \ref{prob:jamie-5prime-implications} \\
+Wk6 Milo - Solutions.tex & Ch.~2: \ref{prob:jamie-6-conditional-distributivity}, \ref{prob:milo-w6-sol-3a} \\
+Wk7 Milo.tex & Ch.~2: \ref{prob:jamie-3-truth-functionality}, \ref{prob:milo-w5-1}; Ch.~4: \ref{prob:jamie-2-follows-from}, \ref{prob:jamie-6-proof-practice}; Ch.~6: \ref{prob:jamie-5prime-nand-nor}, \ref{prob:milo-w7-1} \\
+Wk8 Milo.tex & Ch.~4: \ref{prob:jamie-6-proof-practice} \\
+Wk9 Milo.tex & Ch.~5: \ref{prob:jamie-9-set-builders}, \ref{prob:wei-wk8-2}, \ref{prob:milo-w9-2d} \\
+Wk10 Milo.tex & Ch.~7: \ref{prob:milo-w10-1a}, \ref{prob:milo-w10-1bc}; Ch.~8: \ref{prob:milo-w11-2}, \ref{prob:milo-w10-2abce}, \ref{prob:milo-w10-2d} \\
+Wk11 Milo.tex & Ch.~8: \ref{prob:milo-w11-2}, \ref{prob:milo-w10-2abce}, \ref{prob:milo-w11-3}, \ref{prob:milo-w10-2d} \\
+Wk11 Milo - Solutions.tex & Ch.~8: \ref{prob:milo-w11-2}, \ref{prob:milo-w10-2abce}, \ref{prob:milo-w11-3}, \ref{prob:milo-w10-2d} \\
+Wk12 Milo.tex & Ch.~7: \ref{prob:milo-w12-1c}; Ch.~8: \ref{prob:milo-w12-1abde}; Ch.~9: \ref{prob:milo-w12-3} \\
+Wk14 Milo.tex & Ch.~9: \ref{prob:jamie-14-equivalence-1} \\
+Wk15 Milo.tex & Ch.~7: \ref{prob:milo-w10-1bc}; Ch.~9: \ref{prob:pset11-7}, \ref{prob:pset11-1} \\
+PSet 10 Rewrite.tex & Ch.~9: \ref{prob:jamie-14-equivalence-1} \\
+PSet 10 Solution Set.tex & Ch.~9: \ref{prob:jamie-14-equivalence-1} \\
+PSet 11 Rewrite - Milo.tex & Ch.~9: \ref{prob:pset11-7}, \ref{prob:pset11-1} \\
+PSet 11 Solutions.tex & Ch.~9: \ref{prob:pset11-7}, \ref{prob:pset11-1} \\
+Wk2 Wei.tex & Ch.~4: \ref{prob:wei-wk2-2}, \ref{prob:wei-wk2-1} \\
+Wk3 Wei.tex & Ch.~2: \ref{prob:jamie-2prime-construction-trees}, \ref{prob:jamie-3-truth-functionality}, \ref{prob:jamie-3-truth-tables}; Ch.~3: \ref{prob:jamie-2prime-jazz-style}; Ch.~4: \ref{prob:jamie-2-three-logicians} \\
+Wk4 Wei.tex & Ch.~2: \ref{prob:jamie-3prime-joint-tables}; Ch.~3: \ref{prob:wei-wk4-2} \\
+Wk5 Wei.tex & Ch.~2: \ref{prob:jamie-2-four-cards}, \ref{prob:jamie-5-triangle}, \ref{prob:wei-wk5-2}; Ch.~3: \ref{prob:jamie-4prime-conditional-translation} \\
+Wk6 Wei.tex & Ch.~2: \ref{prob:wei-wk5-2}, \ref{prob:wei-wk6-2}; Ch.~4: \ref{prob:wei-wk6-3}; Ch.~6: \ref{prob:wei-wk6-5} \\
+Wk7 Wei.tex & Ch.~4: \ref{prob:wei-wk7-4}, \ref{prob:jamie-6-proof-practice}; Ch.~6: \ref{prob:jamie-5prime-nand-nor}, \ref{prob:milo-w7-1} \\
+Wk8 Wei.tex & Ch.~4: \ref{prob:wei-wk7-4}; Ch.~5: \ref{prob:wei-wk8-2} \\
+Wk9 Wei.tex & Ch.~5: \ref{prob:milo-w9-2d}; Ch.~7: \ref{prob:jamie-9-quantifier-free-formation}, \ref{prob:wei-wk9-3}; Ch.~8: \ref{prob:wei-wk9-4} \\
+Wk11 Wei.tex & Ch.~8: \ref{prob:milo-w11-2}, \ref{prob:wei-wk11-2}, \ref{prob:milo-w10-2d} \\
+Wk12 Wei.tex & Ch.~8: \ref{prob:wei-wk11-2}, \ref{prob:milo-w10-2d}; Ch.~9: \ref{prob:wei-wk12-2} \\
+Wk14 Wei.tex & Ch.~4: \ref{prob:wei-wk14-3}; Ch.~9: \ref{prob:pset11-7}, \ref{prob:jamie-14-equivalence-1} \\
+Wk15 Wei.tex & Ch.~7: \ref{prob:milo-w10-1bc}; Ch.~9: \ref{prob:wei-wk15-1} \\
+\bottomrule\end{longtable}\normalsize
+\chapter{Editorial notes}
+The problem statements have been lightly edited for readability and consistent notation. The following notes record material corrections, clarifications, and recovered prompts. Deliberate false claims within a fallacy or translation exercise have been retained.
+
+Repeated exercises have been consolidated, including variants that only rename sentence letters, people, or cards. All contributing files are credited. Closely related tasks have been grouped into single exercises. Routine variants and redundant parts have been omitted; the retained parts emphasize different logical structures, methods, and pitfalls. Minor changes of names or argument order allow parallel source exercises to share one formulation.
+
+The names on the title page follow the source archive. The source catalogue records all 43 files, including both versions of the primed Jamie handouts and the separate solution sets. Textbook section references indicate topic correspondence, not that the exercises were copied from Gaifman.
+
+\textbf{\problemref{1}{jamie-2-bivalence-vagueness}, part~(c).} The source gives no year for September 8. The exercise now explicitly asks about the case in which the description has no referent, rather than presupposing a historical fact.
+
+\textbf{\problemref{1}{milo-w2-5}.} The source describes incompleteness as absolute unprovability. The wording now states that independence is relative to a consistent, effectively axiomatized theory strong enough for arithmetic.
+
+\textbf{\problemref{1}{jamie-2-bivalence-context}.} The original bank example does not explicitly shift between senses. The added instruction asks students to identify the assumption needed for it to function as an equivocation.
+
+\textbf{\problemref{2}{jamie-2prime-construction-trees}.} The source list includes modal symbols and expressions without full parentheses. The instructions now make the unary-connective extension and the possible ambiguity explicit.
+
+\textbf{\problemref{2}{jamie-2-four-cards}.} The order of the picture cards differs across the source sheets. The consolidated problem follows the order in \texttt{Wk2 Jamie.tex}; the underlying task is unchanged.
+
+\textbf{\problemref{2}{jamie-6-conditional-distributivity}.} The completed equivalence in (a) and the equivalences in (c)--(d) occur in an inactive part of \texttt{Wk6 Milo - Solutions.tex}. The instruction to prove them has been supplied; no worked solution was present.
+
+\textbf{\problemref{2}{milo-w6-sol-3a}.} The four prompts are recovered from Solutions 3a--3d in \texttt{Wk6 Milo - Solutions.tex}. That file belongs to a different year from the surviving \texttt{Wk6 Milo.tex} worksheet. A spurious negation of $C$ in an intermediate line of the supplied solution to (c) has been removed.
+
+\textbf{\problemref{4}{wei-wk2-1}.} The circle-and-staircase diagram has been redrawn in LaTeX from the source image. The diameter remains $1$ and each approximating polygon has perimeter $4$.
+
+\textbf{\problemref{5}{wei-wk8-2}.} The source asks whether the bare object $a$ is a subset but does not specify whether it is itself a set. The exercise now stipulates that $a,b,c,d$ are distinct objects that are not sets.
+
+\textbf{\problemref{6}{jamie-5prime-nand-nor}, part~(c).} Corrected the source definition of the Sheffer stroke from AND to NAND. The original completeness claim and hint are otherwise impossible.
+
+\textbf{\problemref{8}{milo-w11-3}.} The supplied answers use full siblings and interchangeable parent positions. These conventions have been made explicit in the problem statement.
+
+\textbf{\problemref{7}{milo-w12-1c}.} The distinctness of the three named people is now explicit.
+
+\textbf{\problemref{9}{jamie-14-equivalence-1}, parts~(c) and~(e).} The supplied solutions use quantifier-shifting laws that are valid but not explicitly among the permitted primitive laws. Derivations from those laws have been added to the solutions.
+
+\textbf{\problemref{9}{jamie-14-equivalence-1}, part~(d).} The supplied solution incorrectly retained $\forall y$ after negating a universal quantifier. The last three lines have been corrected to $\exists y$, in agreement with the problem statement.
+
+\textbf{\problemref{9}{pset11-1}, parts~(a)--(c).} The supplied proofs instantiate quantifiers with free variables. Preliminary substitutions of those variables by fresh constants have been inserted so that the derivations follow Gaifman's rules in Section 9.3.1. The original line numbers are retained, with each new step labelled 2a.
+
+\fi % Source catalogue and editorial notes.
+
+\ifshowsolutions
+\chapter{Selected solutions from the archive}
+These solutions cover only the exercises and parts identified below. Problem numbers and part letters refer to the main text.
+
+\solutionheading{2}{milo-w6-sol-3a}{Simplifying conditionals and biconditionals}
+\par\medskip\noindent\textit{Part~(a).}\par\nobreak
+\begin{align*}
+    & (A \to B) \to A \\
+    \equiv\, & (\neg A \lor B) \to A \tag{Definition of material conditional} \\
+    \equiv\, & \neg(\neg A \lor B) \lor A \tag{Definition of material conditional} \\
+    \equiv\, & (A \land \neg B) \lor A \tag{De Morgan's law}    
+\end{align*}
+Because $A$ is true in every case that $(A \land \neg B)$ is true, $(A \land \neg B) \lor A \equiv \boxed{A}$.
+
+\par\medskip\noindent\textit{Part~(b).}\par\nobreak
+\begin{align*}
+    & (A \lor B) \leftrightarrow (A \land B)
+\end{align*}
+There are two cases: Either both sides of the biconditional are true, or both are false. If both are true, then $(A \lor B) \land (A \land B)$, which is true iff $A$ and $B$ are both true. If both are false, then $\neg (A \lor B) \land \neg(A \land B)$, which is true iff $A$ and $B$ are both false. Thus $A$ and $B$ are either both true or both false. $\boxed{A \leftrightarrow B}$.
+
+\par\medskip\noindent\textit{Part~(c).}\par\nobreak
+\begin{align*}
+&(A \land B) \to (A \land C) \\
+\equiv\, & \neg(A \land B) \lor (A \land C) \tag{Definition of material conditional} \\
+\equiv\, & (\neg A \lor \neg B) \lor (A \land C) \tag{De Morgan's law} \\
+\equiv\, & (\neg A \lor \neg B \lor A) \land (\neg A \lor \neg B \lor C) \tag{Distribution} \\
+\equiv\, & ((\neg A \lor A) \lor \neg B) \land (\neg A \lor \neg B \lor C) \tag{Commutativity} \\
+\equiv\, & (\neg A \lor A) \land (\neg A \lor \neg B \lor C) \tag{Tautological disjunct} \\
+\equiv\, & \neg A \lor \neg B \lor C \tag{Tautological conjunct} \\
+\equiv\, & \neg (A \land B) \lor C \tag{De Morgan's law} \\
+\equiv\, & (A \land B) \to C \tag{Definition of material conditional}
+\end{align*}
+
+\par\medskip\noindent\textit{Part~(d).}\par\nobreak
+$(A \to B) \leftrightarrow (A \leftrightarrow B)$ has the same truth conditions as $B \to A$, as shown by the following truth table: \\
+\begin{center}
+\begin{tabular}{c|c||c|c|c|c}
+    $A$ & $B$ & $A \to B$ & $A \leftrightarrow B$ & $(A \to B) \leftrightarrow (A \leftrightarrow B)$ & $B \to A$ \\ \hline
+    T & T & T & T & T & T \\ \hline
+    T & F & F & F & T& T \\ \hline
+    F & T & T & F & F& F \\ \hline
+    F & F & T & T & T & T \\ \hline
+\end{tabular}
+\end{center}
+
+\solutionheading{8}{milo-w11-2}{Scope, binding, and interpretation}
+\par\medskip\noindent\textit{Parts~(a)--(c).}\par\nobreak
+\begin{enumerate}[label=(\alph*)]
+    \item All variables are free. ``$x$ is the same as $y$.'' 
+    \item All occurrences of $x$ are bound, all occurrences of $y$ are free. ``Someone either is $y$ or likes $y$.''
+    \item All variables are bound. ``Someone likes every other person.'' \end{enumerate}
+
+\solutionheading{8}{milo-w10-2abce}{Quantifiers and negation in English}
+\par\medskip\noindent\textit{Parts~(a)--(d).}\par\nobreak
+\begin{enumerate}[label=(\alph*)]
+\item $\forall x (L(x,\text{Bea}) \land L(\text{Bea},x))$
+\item $\forall x(\neg H(x))$
+\item $\forall x(\neg L(\text{Ann}, x)) \land \exists x(\neg L(\text{Cat},x))$
+\item $\exists x (H(x) \land \neg \forall y(L(x,y)))$
+\end{enumerate}
+
+\solutionheading{8}{milo-w11-3}{Family relations}
+\begin{enumerate}[label=(\alph*)]
+    \item $\exists x (M(x) \land \exists y (C(\text{Ann},x,y)))$
+    \item $\exists y\exists z (C(\text{Ann},y,z) \land C(x,y,z) \land \neg(\text{Ann} = x))$
+    \item $F(x) \land \exists z(F(z) \land \exists u(C(z,x,u)) \land \exists v(C(y,z,v)))$
+    \item $\neg \exists y (M(y) \land \neg (y=x) \land \exists u \exists v (C(x,u,v) \land C(y, u,v)))$ \\
+    \quad OR \\
+    $\forall y ((M(y) \land \exists u\exists v (C(x,u,v) \land C(y,u,v))) \to (x=y))$
+\end{enumerate}
+
+\solutionheading{8}{milo-w10-2d}{Identity, uniqueness, and counting}
+\par\medskip\noindent\textit{Part~(a).}\par\nobreak
+$\exists x(\neg (x \approx \text{Ann}) \land \neg H(x))$
+
+\solutionheading{9}{pset11-7}{Constructing countermodels}
+\par\medskip\noindent\textit{Part~(a).}\par\nobreak
+$|\mathcal{M}| = \{c\}$, $P^\mathcal{M} = \emptyset, R^\mathcal{M} = \{c\}$. The constant $c$ denotes the sole domain element: $c^{\mathcal{M}}=c$.
+
+\par\medskip\noindent\textit{Part~(b).}\par\nobreak
+$|\mathcal{M}| = \{a,b\}, R^\mathcal{M} = \{a\}, S^\mathcal{M} = \{a,b\}, T^\mathcal{M} = \{b\}$.
+
+\solutionheading{9}{jamie-14-equivalence-1}{Quantifier equivalences}
+\par\medskip\noindent\textit{Part~(b).}\par\nobreak
+\begin{itemize}
+        \item $\exists x \forall y \neg R(x,y)$
+        \item $\equiv \exists x \neg \exists y R(x,y)$ via Quantifier de Morgan
+        \item $\equiv \neg \forall x \exists y R(x,y)$ via Quantifier de Morgan
+        \item $\equiv \neg \forall z \exists y R(z,y)$ via change of bound variable from $x$ to $z$
+    \end{itemize}
+
+\par\medskip\noindent\textit{Part~(c).}\par\nobreak
+The quantifier-shifting step used below is a derived law under the restricted list in the problem. Here is its derivation. Suppose $x$ is not free in $B$, and abbreviate $\forall x(A\lor B)$ by $U$.
+\begin{align*}
+U &\equiv (U\land B)\lor(U\land\neg B)\\
+&\equiv (U\land\forall x B)\lor(U\land\forall x\neg B)\\
+&\equiv \forall x[(A\lor B)\land B]\lor\forall x[(A\lor B)\land\neg B]\\
+&\equiv \forall x B\lor\forall x(A\land\neg B)\\
+&\equiv \forall x B\lor[(\forall x A)\land\forall x\neg B]\\
+&\equiv B\lor[(\forall x A)\land\neg B]\\
+&\equiv (\forall x A)\lor B.
+\end{align*}
+The successive justifications are sentential equivalence, null quantification, distribution of $\forall$ over $\land$, sentential equivalence, distribution, null quantification, and sentential equivalence. Apply this law with $A=\neg\exists y\neg R(x,y)$ and $B=F(a)$ in the supplied chain below.
+\begin{itemize}
+        \item $\forall x (\exists y \neg R(x,y) \to F(a))$
+        \item $\equiv \forall x (\neg \exists y \neg R(x,y) \vee F(a))$ via connective equivalence
+        \item $\equiv \forall x \neg \exists y \neg R(x,y) \vee F(a)$ via $x$ not free in $F(a)$
+        \item $\equiv \forall x \forall y R(x,y) \vee F(a)$ via quantifier de Morgan (and double-negation equivalence, optional mention)
+    \end{itemize}
+
+\par\medskip\noindent\textit{Part~(d).}\par\nobreak
+\begin{itemize}
+        \item $\neg \exists x \forall y (R(x,y) \vee R(y,x))$
+        \item $\equiv \forall x \neg \forall y (R(x,y) \vee R(y,x))$ via Quantifier de Morgan
+        \item $\equiv \forall x \exists y \neg (R(x,y) \vee R(y,x))$ via Quantifier de Morgan
+        \item $\equiv \forall x \exists y (\neg R(x,y) \wedge \neg R(y,x))$ via connective equivalence
+        \item $\equiv \forall z \forall x \exists y (\neg R(x,y) \wedge \neg R(y,x))$ via vacuous quantification
+    \end{itemize}
+
+\par\medskip\noindent\textit{Part~(e).}\par\nobreak
+For the final step, the following dual shifting law is derivable from the permitted laws. Suppose $x$ is not free in $B$, and abbreviate $\exists x(A\land B)$ by $E$.
+\begin{align*}
+E &\equiv (E\lor B)\land(E\lor\neg B)\\
+&\equiv (E\lor\exists x B)\land(E\lor\exists x\neg B)\\
+&\equiv \exists x[(A\land B)\lor B]\land\exists x[(A\land B)\lor\neg B]\\
+&\equiv \exists x B\land\exists x(A\lor\neg B)\\
+&\equiv \exists x B\land[(\exists x A)\lor\exists x\neg B]\\
+&\equiv B\land[(\exists x A)\lor\neg B]\\
+&\equiv (\exists x A)\land B.
+\end{align*}
+The successive justifications are sentential equivalence, null quantification, distribution of $\exists$ over $\lor$, sentential equivalence, distribution, null quantification, and sentential equivalence. Use this law in reverse with $A=\neg F(x)$ and $B=\exists y\neg R(y,y)$ in the supplied chain below.
+\begin{itemize}
+        \item $\neg ( \forall x F(x) \vee \forall y R(y,y))$
+        \item $\equiv \neg \forall x F(x) \wedge \neg \forall y R(y,y)$ via connective equivalence
+        \item $\equiv \exists x \neg F(x) \wedge \exists y \neg R(y,y)$ via Quantifier de Morgan
+        \item $\equiv \exists x (\neg F(x) \wedge \exists y \neg R(y,y))$ via $x$ not free in $\exists y \neg R(y,y)$
+    \end{itemize}
+
+\solutionheading{9}{pset11-1}{First-order proofs by contradiction}
+\par\medskip\noindent\textit{Part~(a).}\par\nobreak
+\begin{enumerate}[leftmargin=3.5em]
+\item[1.] $\forall x [P(x,y) \lor P(y,x)] \vDash P(y,y)$
+\item[2.] $\forall x [P(x,y) \lor P(y,x)], \neg P(y,y) \vDash \perp$ \quad contradictory-conclusion law
+\item[2a.] $\forall x [P(x,a) \lor P(a,x)], \neg P(a,a) \vDash \perp$ \quad free-variable substitution ($y\mapsto a$; $a$ fresh)
+\item[3.] $\forall x [P(x,a) \lor P(a,x)], P(a,a) \lor P(a,a), \neg P(a,a) \vDash \perp$ \quad $(\forall, \vDash)$
+\item[4.1.] $\forall x [P(x,a) \lor P(a,x)], P(a,a), \neg P(a,a) \vDash \perp$ \quad $(\lor, \vDash)$ \quad $\checkmark$
+\item[4.2.] $\forall x [P(x,a) \lor P(a,x)], P(a,a), \neg P(a,a) \vDash \perp$ \quad $(\lor, \vDash)$ \quad $\checkmark$
+\end{enumerate}
+
+\par\medskip\noindent\textit{Part~(b).}\par\nobreak
+\begin{enumerate}[leftmargin=3.5em]
+\item[1.] $\neg \exists x P(x,x) \vDash \exists x \neg P(x,y)$
+\item[2.] $\neg \exists x P(x,x), \neg \exists x \neg P(x,y) \vDash \perp$ \quad contradictory-conclusion law
+\item[2a.] $\neg \exists x P(x,x), \neg \exists x \neg P(x,a) \vDash \perp$ \quad free-variable substitution ($y\mapsto a$; $a$ fresh)
+\item[3.] $\neg \exists x P(x,x), \neg P(a,a), \neg \exists x \neg P(x,a) \vDash \perp$ \quad $(\neg \exists, \vDash)$
+\item[4.] $\neg \exists x P(x,x), \neg P(a,a), \neg \exists x \neg P(x,a), \neg \neg P(a,a) \vDash \perp$ \quad $(\neg \exists, \vDash)$ \quad $\checkmark$
+\end{enumerate}
+
+\par\medskip\noindent\textit{Part~(c).}\par\nobreak
+\begin{enumerate}[leftmargin=3.5em]
+\item[1.] $\forall v [S(v) \to R(v,x)] \land \neg \exists wR(w,w) \vDash \neg S(x)$
+\item[2.] $\forall v [S(v) \to R(v,x)] \land \neg \exists wR(w,w), \neg\neg S(x) \vDash \perp$ \quad contradictory-conclusion law
+\item[2a.] $\forall v [S(v) \to R(v,a)] \land \neg \exists wR(w,w), \neg\neg S(a) \vDash \perp$ \quad free-variable substitution ($x\mapsto a$; $a$ fresh)
+\item[3.] $\forall v [S(v) \to R(v,a)] \land \neg \exists wR(w,w), S(a) \vDash \perp$ \quad $(\neg\neg, \vDash)$
+\item[4.] $\forall v [S(v) \to R(v,a)], \neg \exists wR(w,w), S(a) \vDash \perp$ \quad $(\land, \vDash)$
+\item[5.] $\forall v [S(v) \to R(v,a)], S(a) \to R(a,a), \neg \exists wR(w,w), S(a) \vDash \perp$ \quad $(\forall, \vDash)$
+\item[6.] $\forall v [S(v) \to R(v,a)], R(a,a), \neg \exists wR(w,w), S(a) \vDash \perp$ \quad disjoining
+\item[7.] $\forall v [S(v) \to R(v,a)], R(a,a), \neg \exists wR(w,w), \neg R(a,a), S(a) \vDash \perp$ \quad $(\neg \exists, \vDash)$ \quad $\checkmark$
+\end{enumerate}
+
+\par\medskip\noindent\textit{Part~(d).}\par\nobreak
+\begin{enumerate}[leftmargin=3.5em]
+\item[1.] $\vDash \forall x[\neg(Sx \lor Rx) \to \exists y(Sy \to Ry)]$
+\item[2.] $\neg \forall x[\neg(Sx \lor Rx) \to \exists y(Sy \to Ry)] \vDash \perp$ \quad contradictory-conclusion law
+\item[3.] $\neg [\neg(Sa \lor Ra) \to \exists y(Sy \to Ry)] \vDash \perp$ \quad $(\neg \forall, \vDash)$
+\item[4.] $\neg(Sa \lor Ra)$, $\neg \exists y(Sy \to Ry) \vDash \perp$ \quad $(\neg \to, \vDash)$
+\item[5.] $\neg Sa, \neg Ra, \neg \exists y (Sy \to Ry) \vDash \perp$ \quad $(\neg \lor, \vDash)$
+\item[6.] $\neg Sa, \neg Ra, \neg \exists y (Sy \to Ry), \neg (Sa \to Ra) \vDash \perp$ \quad $(\neg \exists, \vDash)$
+\item[7.] $\neg Sa, \neg Ra, \neg \exists y(Sy \to Ry), Sa, \neg Ra \vDash \perp$ \quad $(\neg \to, \vDash) \quad \checkmark$
+\end{enumerate}
+
+\par\medskip\noindent\textit{Part~(e).}\par\nobreak
+\begin{enumerate}[leftmargin=3.5em]
+\item[1.] $\vDash \forall x \exists y P(x,y) \lor \exists x \forall y \neg P(x,y)$
+\item[2.] $\neg[\forall x \exists y P(x,y) \lor \exists x \forall y \neg P(x,y)] \vDash \perp$ \quad contradictory-conclusion law
+\item[3.] $\neg\forall x \exists y P(x,y), \neg\exists x \forall y \neg P(x,y) \vDash \perp$ \quad $(\neg \lor, \vDash)$
+\item[4.] $\neg \exists y P(a,y), \neg\exists x \forall y \neg P(x,y) \vDash \perp$ \quad $(\neg \forall, \vDash)$
+\item[5.] $\neg \exists y P(a,y), \neg\exists x \forall y \neg P(x,y), \neg \forall y \neg P(a,y) \vDash \perp$ \quad $(\neg \exists, \vDash)$
+\item[6.] $\neg \exists y P(a,y), \neg\exists x \forall y \neg P(x,y), \neg \neg P(a,b) \vDash \perp$ \quad $(\neg \forall, \vDash)$
+\item[7.] $\neg \exists y P(a,y), \neg P(a,b), \neg\exists x \forall y \neg P(x,y), \neg \neg P(a,b) \vDash \perp$ \quad $(\neg \exists, \vDash)$ \quad $\checkmark$
+\end{enumerate}
+
+\par\medskip\noindent\textit{Part~(f).}\par\nobreak
+\begin{enumerate}[leftmargin=3.5em]
+\item[1.] $\forall y [R(x) \leftrightarrow P(x,y)] \vDash \forall yP(x,y) \lor \forall y \neg P(x,y)$
+\item[2.] $\forall y [R(x) \leftrightarrow P(x,y)], \neg[\forall yP(x,y) \lor \forall y \neg P(x,y)] \vDash \perp $ \quad contradictory-conclusion law
+\item[3.] $\forall y [R(x) \leftrightarrow P(x,y)], \neg\forall yP(x,y), \neg\forall y \neg P(x,y) \vDash \perp $ \quad $(\neg \lor, \vDash)$
+\item[4.] $\forall y [R(x) \leftrightarrow P(x,y)], \neg P(x,a), \neg\forall y \neg P(x,y) \vDash \perp$ \quad $(\neg\forall, \vDash)$
+\item[5.] $\forall y [R(x) \leftrightarrow P(x,y)], \neg P(x,a), \neg \neg P(x,b) \vDash \perp$ \quad $(\neg\forall, \vDash)$
+\item[6.] $\forall y [R(x) \leftrightarrow P(x,y)], \neg P(x,a),  P(x,b) \vDash \perp$ \quad $(\neg\neg, \vDash)$
+\item[7.] $\forall y [R(x) \leftrightarrow P(x,y)], R(x) \leftrightarrow P(x,a), \neg P(x,a), P(x,b) \vDash \perp$ \quad $(\forall, \vDash)$
+\item[8.1.] $\forall y [R(x) \leftrightarrow P(x,y)], R(x), P(x,a), \neg P(x,a), P(x,b) \vDash \perp$ \quad $(\leftrightarrow, \vDash)$ \quad $\checkmark$
+\item[8.2.] $\forall y [R(x) \leftrightarrow P(x,y)], \neg R(x), \neg P(x,a), \neg P(x,a), P(x,b) \vDash \perp$ \quad $(\leftrightarrow, \vDash)$
+\item[9.2.] $\forall y [R(x) \leftrightarrow P(x,y)], R(x) \leftrightarrow P(x,b), \neg R(x), \neg P(x,a), \neg P(x,a), P(x,b) \vDash \perp$ \quad $(\forall, \vDash)$
+\item[10.2.1.] $\forall y [R(x) \leftrightarrow P(x,y)], R(x), P(x,b), \neg R(x), \neg P(x,a), \neg P(x,a), P(x,b) \vDash \perp$ \quad $(\leftrightarrow, \vDash)$ \quad $\checkmark$
+\item[10.2.2.] $\forall y [R(x) \leftrightarrow P(x,y)], \neg R(x), \neg P(x,b), \neg R(x), \neg P(x,a), \neg P(x,a), P(x,b) \vDash \perp$ \quad $(\leftrightarrow, \vDash)$ \quad $\checkmark$
+\end{enumerate}
+
+\fi
+\end{document}
